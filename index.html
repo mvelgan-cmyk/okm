@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Чому дитина не хоче</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one narrow column, a white "sheet" on the brand violet ground, one question at a time */
+:root{
+  --ground:#5B3FE0; --ground2:#4F34D4; --sheet:#FFFFFF; --ink:#16131F; --muted:#5E5A70;
+  --accent:#5B3FE0; --soft:#F2EFFE; --line:#E2DDF7; --sun:#FFD43B; --sun-ink:#16131F;
+  --warn-bg:#FFF6E0; --warn-ink:#6B4E00;
+  --display:"Unbounded","Inter",system-ui,sans-serif; --body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#1D1638; --ground2:#241B47; --sheet:#151126; --ink:#F1EEFB; --muted:#B4AECB;
+  --accent:#A996FF; --soft:#241D40; --line:#352B5E; --sun:#FFD43B; --sun-ink:#16131F;
+  --warn-bg:#2E2614; --warn-ink:#F2D58A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#1D1638; --ground2:#241B47; --sheet:#151126; --ink:#F1EEFB; --muted:#B4AECB;
+  --accent:#A996FF; --soft:#241D40; --line:#352B5E; --sun:#FFD43B; --sun-ink:#16131F;
+  --warn-bg:#2E2614; --warn-ink:#F2D58A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--ground);background-image:repeating-linear-gradient(120deg,transparent 0 140px,rgba(255,255,255,.045) 140px 280px);
+  color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;min-height:100vh;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 40px}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+.pill{background:var(--sun);color:var(--sun-ink);border-radius:999px;padding:5px 12px;font-weight:700;font-size:12px;letter-spacing:.06em}
+.sheet{background:var(--sheet);border-radius:28px;padding:clamp(22px,5vw,40px);display:flex;flex-direction:column;gap:20px;min-width:0}
+h1,h2{font-family:var(--display);text-transform:uppercase;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(28px,6.5vw,42px)}
+h2{font-size:clamp(20px,4.6vw,26px)}
+h1 em,h2 em{font-style:normal;color:var(--accent)}
+p{margin:0}
+.lead{color:var(--muted);font-size:17px;max-width:60ch}
+.meta{display:flex;gap:10px;flex-wrap:wrap}
+.meta span{background:var(--soft);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600;color:var(--ink)}
+.label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.ages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.opt{all:unset;box-sizing:border-box;display:block;width:100%;cursor:pointer;background:var(--soft);border:2px solid transparent;border-radius:18px;padding:16px 18px;font-size:16px;font-weight:500;line-height:1.4;color:var(--ink);transition:border-color .15s,transform .15s}
+.opt:hover{border-color:var(--accent)}
+.opt:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--sheet))}
+.ages .opt{text-align:center;font-family:var(--display);font-weight:800;font-size:20px;padding:18px 8px}
+.ages .opt small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--muted);margin-top:4px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;background:var(--sun);color:var(--sun-ink);font-weight:700;font-size:16px;border-radius:999px;padding:14px 26px;text-align:center}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--muted);padding:14px 8px}
+.row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.bar{height:8px;background:var(--soft);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .25s}
+.count{font-size:14px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.res-name{background:var(--soft);border-radius:22px;padding:22px}
+.res-name .label{margin-bottom:6px}
+.blocks{display:flex;flex-direction:column;gap:14px}
+.blocks h3{margin:0 0 6px;font-size:15px;font-weight:700}
+.blocks ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.dist{display:flex;flex-direction:column;gap:10px}
+.dist .d{display:grid;grid-template-columns:minmax(0,190px) 1fr 28px;gap:10px;align-items:center;font-size:14px}
+.dist .d .t{height:10px;background:var(--soft);border-radius:999px;overflow:hidden}
+.dist .d .t i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.dist .d.top b{color:var(--accent)}
+.dist .d span:last-child{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+.note{background:var(--warn-bg);color:var(--warn-ink);border-radius:16px;padding:14px 16px;font-size:14px}
+.foot{color:#fff;opacity:.85;text-align:center;font-size:13px;font-weight:600}
+@media (max-width:420px){.ages{grid-template-columns:1fr}.dist .d{grid-template-columns:1fr 28px}.dist .d .t{grid-column:1/-1;grid-row:2}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top"><span>PRO Батьків</span><span class="pill">Квіз</span></div>
+  <main class="sheet" id="app" aria-live="polite"></main>
+  <div class="foot">PRO Батьків · GoITeens</div>
+</div>
+
+<script>
+// Посилання на бота для кнопки в результатах. Якщо порожнє — кнопка не показується.
+const BOT_URL = "";
+
+const P = {
+  tired:{name:"Втомлений", short:"Дитині бракує сил, а не бажання",
+    what:"Схоже, «не хочу» тут означає «не можу»: бракує сну, а відпочинок зводиться до гаджетів або гуртків без пауз. Втомлена дитина виглядає млявою чи роздратованою, і будь-яке завдання здається їй горою.",
+    all:["Тиждень поспостерігайте за сном і за тим, як дитина відпочиває.","Додайте щодня 30 хвилин відпочинку без екрана.","Спершу відновлення, потім вимоги: втомленій дитині не допоможе «зберися»."],
+    age:{"5-7":"Тримайте стабільний режим сну і спокійний вечір без мультиків перед сном.","8-12":"Залиште між школою і гуртками паузу хоча б на 30 хвилин, коли нічого не треба.","13-17":"Домовтеся разом про вечірній ритм і не забирайте сон заради навчання."}},
+  fear:{name:"Боїться помилитися", short:"Краще не почати, ніж провалитися",
+    what:"Дитина не починає або кидає, щойно щось не виходить. За цим часто стоїть страх помилки: якщо не пробувати, то й не програєш. Похвала «ти розумниця» цей страх тільки посилює.",
+    all:["Хваліть за спробу і зусилля, а не за результат.","Розкажіть про власні помилки і що вони вас навчили.","Розбивайте складне на маленькі кроки, щоб перший був легким."],
+    age:{"5-7":"Кажіть: «Ти довго намагався» — і радійте самій спробі.","8-12":"Показуйте прогрес: «Місяць тому ти так не вмів».","13-17":"Порівнюйте дитину лише з нею самою, а не з однолітками."}},
+  sense:{name:"Не бачить сенсу", short:"Мета далека й чужа",
+    what:"Дитина питає «а навіщо мені це?», і інтерес згасає разом із новизною. Їй не ліньки, просто в завданні немає нічого особистого: мета здається далекою і чужою.",
+    all:["Пов’яжіть завдання з тим, що дитині цікаво вже зараз.","Питайте, а не пояснюйте: «А що тобі в цьому цікаво?»","Шукайте маленькі видимі результати, які можна побачити одразу."],
+    age:{"5-7":"Перетворюйте завдання на гру або історію.","8-12":"Показуйте, де це знадобиться в її захопленнях: в іграх, творчості, спорті.","13-17":"Спитайте: «Що для тебе в цьому важливо?» — і прийміть чесну відповідь."}},
+  control:{name:"Бореться за контроль", short:"«Не хочу», бо наказали",
+    what:"Чим більше нагадуєте, тим сильніше дитина впирається. Їй важливо вирішувати самій, тому будь-яке «зроби зараз» звучить як наказ, з яким хочеться сперечатися.",
+    all:["Давайте вибір у межах правила: «Уроки до вечері — о 17:00 чи о 17:30?»","Менше нагадувань, більше домовленостей.","Залиште дитині зону, де вона вирішує сама."],
+    age:{"5-7":"Пропонуйте вибір із двох варіантів: «Спершу малюємо чи збираємо іграшки?»","8-12":"Дайте вирішувати, що і в якому порядку робити.","13-17":"Домовляйтеся про правила разом і записуйте їх."}},
+  over:{name:"Перевантажений", short:"Забагато справ, замало часу",
+    what:"У розкладі школа, гуртки, домашнє, і майже немає часу, який належить лише дитині. «Не хочу» тут — сигнал, що справ більше, ніж сил і годин.",
+    all:["Перегляньте тиждень разом і приберіть зайве.","Залиште у тижні час без розкладу.","Питайте, що з гуртків дитині справді подобається."],
+    age:{"5-7":"Щодня потрібен час для вільної гри без занять.","8-12":"Залиште хоча б один вечір на тиждень без гуртків.","13-17":"Складіть тиждень разом і дайте дитині право відмовитися від одного заняття."}}
+};
+const KEYS=["tired","fear","sense","control","over"];
+
+const Q=[
+ {q:"Коли дитина відкладає домашнє завдання, найчастіше вона…",a:{tired:"Лежить і каже «я втомилась»",fear:"Каже «в мене все одно не вийде»",sense:"Питає «а навіщо це треба?»",control:"Робить навпаки, щойно ви нагадуєте",over:"Каже, що в неї ще купа справ"}},
+ {q:"Коли щось не виходить з першого разу, дитина…",a:{tired:"Кидає, бо немає сил продовжувати",fear:"Засмучується, плаче або злиться на себе",sense:"Втрачає інтерес: «нудно»",control:"Не хоче, щоб ви допомагали чи підказували",over:"Перемикається, бо треба встигнути ще багато"}},
+ {q:"Яка дитина ввечері в будні?",a:{tired:"Млява, хоче лише лежати або в телефон",fear:"Нервує через завтрашню контрольну чи виступ",sense:"Спокійна, але ні за що не береться без причини",control:"Сперечається через кожне «вже пора»",over:"Біжить з гуртка на гурток, на вечерю ледь встигає"}},
+ {q:"Як дитина реагує на нове заняття чи гурток?",a:{tired:"«Може, потім, я втомився»",fear:"«А раптом я буду гірший за інших?»",sense:"«А що мені це дасть?»",control:"Погоджується, лише якщо обрала сама",over:"«Коли? У мене і так немає часу»"}},
+ {q:"Яку фразу ви чуєте від дитини найчастіше?",a:{tired:"«Я не висипаюсь» або «немає сил»",fear:"«Я тупий» або «в мене нічого не вийде»",sense:"«Це нудно» або «нащо це»",control:"«Я сам вирішу» або «відчепись»",over:"«Я не встигаю»"}},
+ {q:"Як дитина відпочиває?",a:{tired:"Відпочинок — це телефон, але після нього не легше",fear:"Відпочиває, але постійно думає про оцінки й помилки",sense:"Годинами захоплено робить те, що їй цікаво",control:"Хоче відпочивати як і коли вирішить сама",over:"Вільного часу майже немає"}},
+ {q:"Коли ви хвалите дитину, вона…",a:{tired:"Реагує мляво, без емоцій",fear:"Не вірить: «Та нічого особливого»",sense:"Питає «і що?», якщо не бачить у цьому сенсу",control:"Сприймає похвалу як спосіб змусити робити ще",over:"Одразу перемикається на наступну справу"}},
+ {q:"Що найчастіше закінчується сваркою?",a:{tired:"Ранкове вставання",fear:"Перевірка оцінок чи домашнього",sense:"«Навіщо мені ця математика чи музика»",control:"Будь-яке «зроби це зараз»",over:"Розклад: не встигаємо на гурток чи уроки"}},
+ {q:"Як дитина ставиться до оцінок?",a:{tired:"Байдуже, бо немає сил",fear:"Дуже переживає навіть через одну погану",sense:"Не розуміє, навіщо вони",control:"«Це мої оцінки, а не ваші»",over:"Хоче добре, але все робить поспіхом"}},
+ {q:"Що, на вашу думку, найбільше допомогло б зараз?",a:{tired:"Більше сну і спокійного відпочинку",fear:"Щоб дитина повірила в себе",sense:"Щоб у неї з’явився інтерес",control:"Менше суперечок, більше домовленостей",over:"Менше справ у розкладі"}}
+];
+const AGES=[["5-7","5–7","«хочу гратися»"],["8-12","8–12","«хочу вміти»"],["13-17","13–17","«хочу сам»"]];
+
+const S={step:"start",age:null,i:0,ans:[],order:[]};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const app=document.getElementById("app");
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  if(S.step==="start"){
+    app.innerHTML=`<p class="label">Квіз для батьків</p>
+      <h1>Чому дитина <em>«не хоче»?</em></h1>
+      <p class="lead">10 запитань про звичайні ситуації вдома. Наприкінці ви побачите, що найімовірніше стоїть за «не хочу» вашої дитини, і отримаєте поради саме для її віку.</p>
+      <div class="meta"><span>10 запитань</span><span>3 хвилини</span><span>без реєстрації</span></div>
+      <p class="label">Скільки років дитині?</p>
+      <div class="ages">${AGES.map(([k,t,s])=>`<button class="opt" data-age="${k}" aria-pressed="${S.age===k}" id="age-${k}">${t}<small>${s}</small></button>`).join("")}</div>
+      <div class="row"><button class="btn" id="go" ${S.age?"":"disabled"}>Почати</button></div>`;
+    app.querySelectorAll("[data-age]").forEach(b=>b.onclick=()=>{S.age=b.dataset.age;render()});
+    document.getElementById("go").onclick=()=>{if(!S.age)return;S.step="q";S.i=0;S.ans=[];S.order=Q.map(()=>shuffle(KEYS));render()};
+    return;
+  }
+  if(S.step==="q"){
+    const q=Q[S.i], ord=S.order[S.i], sel=S.ans[S.i];
+    app.innerHTML=`<div class="row"><span class="count">Запитання ${S.i+1} з ${Q.length}</span></div>
+      <div class="bar" aria-hidden="true"><i style="width:${(S.i/Q.length)*100}%"></i></div>
+      <h2>${esc(q.q)}</h2>
+      <div class="opts">${ord.map(k=>`<button class="opt" id="q${S.i}-${k}" data-k="${k}" aria-pressed="${sel===k}">${esc(q.a[k])}</button>`).join("")}</div>
+      <div class="row"><button class="btn ghost" id="back">← Назад</button></div>`;
+    app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{S.ans[S.i]=b.dataset.k;
+      if(S.i<Q.length-1){S.i++;render()}else{S.step="res";render()} window.scrollTo({top:0})});
+    document.getElementById("back").onclick=()=>{if(S.i===0){S.step="start"}else{S.i--}render()};
+    return;
+  }
+  // results
+  const c=Object.fromEntries(KEYS.map(k=>[k,0])); S.ans.forEach(k=>c[k]++);
+  const max=Math.max(...Object.values(c)); const tops=KEYS.filter(k=>c[k]===max);
+  const main=tops[0], p=P[main];
+  const ageLabel=AGES.find(a=>a[0]===S.age)[1];
+  const also=tops.slice(1).map(k=>P[k].name);
+  app.innerHTML=`<p class="label">Ваш результат</p>
+    <div class="res-name"><p class="label">${tops.length>1?"Найсильніше збігаються кілька профілів":"Найімовірніше"}</p>
+      <h1><em>${esc(p.name)}</em></h1><p class="lead" style="margin-top:8px">${esc(p.short)}${also.length?`. А ще: ${esc(also.join(", "))}`:""}</p></div>
+    <div class="blocks">
+      <div><h3>Що за цим стоїть</h3><p>${esc(p.what)}</p></div>
+      <div><h3>Що допомагає</h3><ul>${p.all.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div><h3>Для дитини ${ageLabel} років</h3><p>${esc(p.age[S.age])}</p></div>
+    </div>
+    <div><p class="label" style="margin-bottom:10px">Як розподілилися ваші відповіді</p>
+      <div class="dist">${KEYS.slice().sort((a,b)=>c[b]-c[a]).map(k=>`<div class="d ${c[k]===max?"top":""}"><b>${esc(P[k].name)}</b><div class="t"><i style="width:${c[k]*10}%"></i></div><span>${c[k]}</span></div>`).join("")}</div></div>
+    <p class="note">Квіз — не діагноз, а підказка, з чого почати. Якщо дитина тривалий час пригнічена, втратила інтерес навіть до друзів і хобі або в неї різко змінилися сон чи апетит, варто звернутися до психолога.</p>
+    <p class="lead">Більше про мотивацію, записи вебінарів і шпаргалки для батьків — у спільноті PRO Батьків.</p>
+    <div class="row">${BOT_URL?`<a class="btn" href="${BOT_URL}" target="_blank" rel="noopener">Приєднатися до спільноти</a>`:""}<button class="btn ghost" id="again">Пройти ще раз</button></div>`;
+  document.getElementById("again").onclick=()=>{S.step="start";S.age=null;render()};
+}
+render();
+</script>
+</body>
+</html>
